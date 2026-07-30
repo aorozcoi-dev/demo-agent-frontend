@@ -140,6 +140,15 @@ mvn spring-boot:run
 
 Open your browser at <http://localhost:8080>, enter a query in the prompt area, and press **Send** (or shortcut `Ctrl`/`Cmd` + `Enter`).
 
+### Running with IntelliJ IDEA
+
+The repository includes a pre-configured Run/Debug Configuration under `.idea/runConfigurations/` that is automatically recognized by IntelliJ IDEA.
+
+1. **Open the Project:** Open IntelliJ IDEA, select **Open**, and choose the project's root folder containing the `pom.xml` file. IntelliJ will automatically detect and import the project as a Maven project.
+2. **Locate the Run Configuration:** In the top right corner of the IDE, locate the run configuration dropdown and ensure **AgentChatApplication** is selected.
+3. **Run or Debug:** Click the green **Run** (play icon) or **Debug** (bug icon) button.
+   * *Note:* The pre-configured environment variables (`ELASTIC_AGENT_ID`, `KIBANA_BASE_URL`, and `ELASTIC_API_KEY`) are already set up within the run configuration. You can modify them by selecting **Edit Configurations...** if needed.
+
 ### Packaging & Executable JAR
 
 ```bash

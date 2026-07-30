@@ -82,6 +82,15 @@ mvn spring-boot:run
 Abre <http://localhost:8080>, escribe una pregunta y pulsa **Enviar**
 (o `Ctrl`/`Cmd` + `Enter`).
 
+### Ejecutar con IntelliJ IDEA
+
+El repositorio incluye una configuración de ejecución/depuración preconfigurada bajo `.idea/runConfigurations/` que IntelliJ IDEA reconoce automáticamente.
+
+1. **Abrir el proyecto:** Abre IntelliJ IDEA, selecciona **Open** (Abrir) y elige la carpeta raíz del proyecto que contiene el archivo `pom.xml`. IntelliJ detectará e importará automáticamente el proyecto como un proyecto de Maven.
+2. **Localizar la configuración de ejecución:** En la esquina superior derecha del IDE, localiza el menú desplegable de configuraciones de ejecución y asegúrate de que **AgentChatApplication** esté seleccionado.
+3. **Ejecutar o Depurar:** Haz clic en el botón verde de **Run** (reproducir) o **Debug** (depurar).
+   * *Nota:* Las variables de entorno preconfiguradas (`ELASTIC_AGENT_ID`, `KIBANA_BASE_URL` y `ELASTIC_API_KEY`) ya están establecidas dentro de la configuración de ejecución. Si necesitas modificarlas, puedes hacerlo seleccionando **Edit Configurations...** (Editar configuraciones).
+
 ### Empaquetar
 
 ```bash
