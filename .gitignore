@@ -10,6 +10,9 @@ target/
 .project
 .classpath
 
+# Claude Code
+.claude/
+
 # Logs y sistema
 *.log
 .DS_Store
