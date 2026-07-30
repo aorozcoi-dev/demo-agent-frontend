@@ -1,0 +1,332 @@
+:root {
+    /* ===== Esquema de color pastel (tema claro) ===== */
+    --bg-1: #f7f2fb;              /* fondo: degradado lavanda muy claro */
+    --bg-2: #eaf3fc;
+    --text: #4a4560;             /* gris violáceo oscuro: buen contraste sobre pastel */
+    --muted: #7d7591;
+
+    --accent: #b8a1e3;           /* lila pastel: botón y acentos */
+    --accent-strong: #a487da;    /* hover del botón / caret */
+    --accent-contrast: #382a5a;  /* texto sobre el botón */
+    --link: #7a5bc2;             /* enlaces: violeta más saturado para legibilidad */
+
+    --error: #e39aab;            /* rosa pastel: borde de error */
+    --error-text: #b45a6e;       /* texto de error legible */
+
+    /* Área de conversación (lienzo): tono azul/menta pastel */
+    --respuesta-bg: #e8f1fb;
+    --respuesta-border: #cddff2;
+
+    /* Burbuja del USUARIO: lila pastel, alineada a la derecha */
+    --burbuja-usuario-bg: #e7dbf7;
+    --burbuja-usuario-border: #d7c6f0;
+
+    /* Burbuja del AGENTE: blanca, alineada a la izquierda */
+    --burbuja-agente-bg: #ffffff;
+    --burbuja-agente-border: #d5e3f3;
+
+    /* Componente de ENTRADA del prompt: tono rosa/durazno pastel (distinto) */
+    --entrada-bg: #fceef3;
+    --entrada-border: #f2d6e0;
+    --entrada-campo-bg: #fff7fa; /* el textarea, algo más claro que su caja */
+
+    /* Detalles del Markdown */
+    --code-bg: #eef2f8;          /* chip de código dentro de la burbuja del agente */
+    --border-soft: #d9d2e8;      /* bordes suaves (tablas, hr) */
+
+    --radius: 12px;
+    --font: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    background: linear-gradient(160deg, var(--bg-1), var(--bg-2));
+    background-attachment: fixed;
+    color: var(--text);
+    font-family: var(--font);
+    line-height: 1.6;
+}
+
+.chat {
+    width: min(760px, 100%);
+    margin: 2rem 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.chat__header {
+    text-align: center;
+}
+
+.chat__title {
+    margin: 0;
+    font-size: 1.5rem;
+}
+
+.chat__subtitle {
+    margin: 0.25rem 0 0;
+    color: var(--muted);
+    font-size: 0.9rem;
+}
+
+/* ====== Área de conversación ====== */
+.respuesta {
+    min-height: 220px;
+    max-height: 55vh;
+    padding: 1.25rem;
+    background: var(--respuesta-bg);
+    border: 1px solid var(--respuesta-border);
+    border-radius: var(--radius);
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+}
+
+/* Marcador de posición cuando aún no hay conversación. */
+.respuesta:empty::before {
+    content: attr(data-placeholder);
+    color: var(--muted);
+}
+
+/* ====== Burbujas de mensaje ====== */
+.mensaje {
+    max-width: 85%;
+    padding: 0.65rem 0.95rem;
+    border-radius: 14px;
+    border: 1px solid transparent;
+}
+
+.mensaje__autor {
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-bottom: 0.25rem;
+    color: var(--muted);
+}
+
+.mensaje__cuerpo {
+    overflow-wrap: break-word;
+}
+
+/* Mensaje del usuario: derecha, lila pastel. */
+.mensaje--usuario {
+    align-self: flex-end;
+    background: var(--burbuja-usuario-bg);
+    border-color: var(--burbuja-usuario-border);
+    border-bottom-right-radius: 4px;
+}
+.mensaje--usuario .mensaje__autor {
+    text-align: right;
+}
+.mensaje--usuario .mensaje__cuerpo {
+    white-space: pre-wrap; /* conserva los saltos de línea que escribió el usuario */
+}
+
+/* Mensaje del agente: izquierda, blanco. */
+.mensaje--agente {
+    align-self: flex-start;
+    background: var(--burbuja-agente-bg);
+    border-color: var(--burbuja-agente-border);
+    border-bottom-left-radius: 4px;
+}
+.mensaje--agente.mensaje--error {
+    border-color: var(--error);
+}
+
+/* Cursor parpadeante mientras el agente está escribiendo. */
+.mensaje--agente.mensaje--escribiendo .mensaje__cuerpo::after {
+    content: "▍";
+    color: var(--accent-strong);
+    animation: parpadeo 1s steps(2, start) infinite;
+}
+
+@keyframes parpadeo {
+    to {
+        visibility: hidden;
+    }
+}
+
+/* Aviso de error dentro de la burbuja del agente. */
+.aviso-error {
+    color: var(--error-text);
+    margin-top: 0.4rem;
+    white-space: pre-wrap;
+}
+
+/* ====== Estilos del Markdown renderizado (dentro de la burbuja del agente) ====== */
+.mensaje__cuerpo > :first-child {
+    margin-top: 0;
+}
+.mensaje__cuerpo > :last-child {
+    margin-bottom: 0;
+}
+.mensaje__cuerpo p {
+    margin: 0 0 0.75rem;
+}
+.mensaje__cuerpo ul,
+.mensaje__cuerpo ol {
+    margin: 0 0 0.75rem;
+    padding-left: 1.4rem;
+}
+.mensaje__cuerpo li {
+    margin: 0.15rem 0;
+}
+.mensaje__cuerpo h1,
+.mensaje__cuerpo h2,
+.mensaje__cuerpo h3,
+.mensaje__cuerpo h4 {
+    margin: 1rem 0 0.5rem;
+    line-height: 1.3;
+}
+.mensaje__cuerpo h1 { font-size: 1.35rem; }
+.mensaje__cuerpo h2 { font-size: 1.2rem; }
+.mensaje__cuerpo h3 { font-size: 1.05rem; }
+.mensaje__cuerpo a {
+    color: var(--link);
+}
+.mensaje__cuerpo code {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 0.9em;
+    background: var(--code-bg);
+    padding: 0.1rem 0.35rem;
+    border-radius: 4px;
+}
+.mensaje__cuerpo pre {
+    background: var(--code-bg);
+    padding: 0.9rem;
+    border-radius: 8px;
+    overflow-x: auto;
+    margin: 0 0 0.75rem;
+}
+.mensaje__cuerpo pre code {
+    background: none;
+    padding: 0;
+}
+.mensaje__cuerpo blockquote {
+    margin: 0 0 0.75rem;
+    padding: 0.2rem 0 0.2rem 0.9rem;
+    border-left: 3px solid var(--accent);
+    color: var(--muted);
+}
+.mensaje__cuerpo table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 0 0 0.75rem;
+}
+.mensaje__cuerpo th,
+.mensaje__cuerpo td {
+    border: 1px solid var(--border-soft);
+    padding: 0.4rem 0.6rem;
+    text-align: left;
+}
+.mensaje__cuerpo hr {
+    border: none;
+    border-top: 1px solid var(--border-soft);
+    margin: 1rem 0;
+}
+
+/* ====== Caja de entrada del prompt ====== */
+.entrada {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    padding: 1rem;
+    background: var(--entrada-bg);
+    border: 1px solid var(--entrada-border);
+    border-radius: var(--radius);
+}
+
+textarea {
+    width: 100%;
+    resize: vertical;
+    padding: 0.75rem;
+    font: inherit;
+    color: var(--text);
+    background: var(--entrada-campo-bg);
+    border: 1px solid var(--entrada-border);
+    border-radius: 8px;
+}
+
+textarea::placeholder {
+    color: var(--muted);
+}
+
+textarea:focus {
+    outline: none;
+    border-color: var(--accent-strong);
+}
+
+.entrada__acciones {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.entrada__botones {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+}
+
+.estado {
+    color: var(--muted);
+    font-size: 0.85rem;
+}
+
+button {
+    padding: 0.6rem 1.5rem;
+    font: inherit;
+    font-weight: 600;
+    color: var(--accent-contrast);
+    background: var(--accent);
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.15s ease;
+}
+
+button:hover:not(:disabled) {
+    background: var(--accent-strong);
+}
+
+button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Botón secundario (REINICIAR): contorno, para distinguirlo del primario. */
+button.btn-secundario {
+    color: var(--accent-contrast);
+    background: var(--entrada-campo-bg);
+    border: 1px solid var(--accent);
+}
+
+button.btn-secundario:hover:not(:disabled) {
+    background: #ffffff;
+    border-color: var(--accent-strong);
+}
+
+/* Accesibilidad: etiqueta visible solo para lectores de pantalla. */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}

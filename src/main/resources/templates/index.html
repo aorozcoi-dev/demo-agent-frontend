@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chatbot · Elastic Agent Builder</title>
+    <link rel="stylesheet" th:href="@{/css/chat.css}">
+</head>
+<body>
+    <main class="chat">
+        <header class="chat__header">
+            <h1 class="chat__title">Chatbot · Elastic Agent Builder</h1>
+            <p class="chat__subtitle">Cada pregunta es independiente (sin memoria).</p>
+        </header>
+
+        <section id="respuesta" class="respuesta" aria-live="polite"
+                 data-placeholder="Aquí verás tu pregunta y la respuesta del agente…"></section>
+
+        <form id="formulario" class="entrada" autocomplete="off">
+            <label class="sr-only" for="prompt">Escribe tu pregunta</label>
+            <textarea id="prompt" name="prompt" rows="3"
+                      placeholder="Escribe tu pregunta y pulsa Enviar (Ctrl/Cmd + Enter)…"
+                      maxlength="4000" required></textarea>
+            <div class="entrada__acciones">
+                <span id="estado" class="estado" role="status"></span>
+                <div class="entrada__botones">
+                    <button id="reiniciar" type="button" class="btn-secundario">Reiniciar</button>
+                    <button id="enviar" type="submit">Enviar</button>
+                </div>
+            </div>
+        </form>
+    </main>
+
+    <!-- marked: parser de Markdown · DOMPurify: saneado de HTML (anti-XSS).
+         Vendorizados localmente para no depender de CDNs externos. -->
+    <script th:src="@{/js/vendor/marked.min.js}"></script>
+    <script th:src="@{/js/vendor/purify.min.js}"></script>
+    <script th:src="@{/js/chat.js}"></script>
+</body>
+</html>

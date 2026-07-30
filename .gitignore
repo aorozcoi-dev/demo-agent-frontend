@@ -1,0 +1,19 @@
+# Maven
+target/
+!.mvn/wrapper/maven-wrapper.jar
+
+# IDE
+.idea/
+*.iml
+.vscode/
+.settings/
+.project
+.classpath
+
+# Logs y sistema
+*.log
+.DS_Store
+
+# Variables de entorno locales (¡nunca subir la API Key!)
+.env
+*.env

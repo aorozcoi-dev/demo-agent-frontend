@@ -1,0 +1,34 @@
+spring:
+  application:
+    name: agent-chat
+  main:
+    # Con web (Tomcat/servlet) y webflux en el classpath, forzamos el stack
+    # servlet de forma explícita. WebClient sigue disponible para el streaming.
+    web-application-type: servlet
+  threads:
+    virtual:
+      enabled: true            # Java 25 virtual threads: mejor escalado bajo SSE
+
+server:
+  port: 8080
+
+elastic:
+  agent:
+    # HOST de KIBANA (no de Elasticsearch, que vive en el :9200).
+    # La variable de entorno KIBANA_BASE_URL, si se define, tiene prioridad.
+    kibana-base-url: ${KIBANA_BASE_URL}
+    # API KEY de Kibana. La variable de entorno ELASTIC_API_KEY tiene prioridad.
+    # ADVERTENCIA DE SEGURIDAD: la clave por defecto queda escrita en el repositorio.
+    # No subas este archivo a un repo público y rota la clave si se expone.
+    api-key: "${ELASTIC_API_KEY}"
+    agent-id: ${ELASTIC_AGENT_ID}
+    space: ${ELASTIC_SPACE:}   # vacío = space por defecto
+    connect-timeout: 5s
+    response-timeout: 120s     # las respuestas del agente pueden tardar
+
+logging:
+  level:
+    root: INFO
+    com.bigfito.agentchat: INFO
+    # Sube a DEBUG para ver el detalle de las peticiones (nunca se registra la API Key):
+    # com.bigfito.agentchat.client: DEBUG

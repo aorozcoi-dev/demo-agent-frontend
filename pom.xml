@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <!-- Heredamos gestión de dependencias y plugins de Spring Boot. -->
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>4.1.0</version>
+        <relativePath/>
+    </parent>
+
+    <groupId>com.bigfito</groupId>
+    <artifactId>agent-chat</artifactId>
+    <version>0.0.1</version>
+    <name>agent-chat</name>
+    <description>Chatbot web con Elastic Agent Builder (Elastic 9.4.3) — streaming en vivo</description>
+
+    <properties>
+        <java.version>25</java.version>
+        <!-- Versión estable de MockWebServer para probar el streaming SSE -->
+        <mockwebserver.version>4.12.0</mockwebserver.version>
+    </properties>
+
+    <dependencies>
+        <!-- Web MVC + Tomcat (stack servlet) + controladores -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+
+        <!-- Thymeleaf para la interfaz renderizada en servidor -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-thymeleaf</artifactId>
+        </dependency>
+
+        <!-- Aporta WebClient (consumo reactivo de SSE hacia Kibana).
+             Con web + webflux en el classpath, Spring Boot sigue arrancando
+             sobre Tomcat (stack servlet); WebClient queda disponible. -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-webflux</artifactId>
+        </dependency>
+
+        <!-- Validación de entrada (prompt no vacío, longitud máxima) -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-validation</artifactId>
+        </dependency>
+
+        <!-- Genera metadatos para las @ConfigurationProperties (autocompletado en el IDE) -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-configuration-processor</artifactId>
+            <optional>true</optional>
+        </dependency>
+
+        <!-- ================== Pruebas ================== -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- StepVerifier para probar flujos reactivos (Flux) -->
+        <dependency>
+            <groupId>io.projectreactor</groupId>
+            <artifactId>reactor-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- Servidor HTTP simulado para probar el streaming SSE del cliente -->
+        <dependency>
+            <groupId>com.squareup.okhttp3</groupId>
+            <artifactId>mockwebserver</artifactId>
+            <version>${mockwebserver.version}</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <jvmArguments>--enable-native-access=ALL-UNNAMED</jvmArguments>
+                </configuration>
+            </plugin>
+
+            <!--
+                Expone la ruta del jar de Mockito en la propiedad
+                ${org.mockito:mockito-core:jar}, para poder cargarlo como -javaagent
+                en las pruebas (ver maven-surefire-plugin más abajo).
+            -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>get-mockito-agent-path</id>
+                        <phase>process-test-classes</phase>
+                        <goals>
+                            <goal>properties</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!--
+                Carga Mockito como agente ESTÁTICO en la JVM de pruebas. Evita que
+                Mockito se auto-adjunte dinámicamente (desaconsejado y prohibido en
+                futuras versiones del JDK). -Xshare:off silencia el aviso de CDS que
+                aparece al añadir un agente al bootstrap classpath.
+            -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <argLine>-javaagent:${org.mockito:mockito-core:jar} -Xshare:off --enable-native-access=ALL-UNNAMED</argLine>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>
